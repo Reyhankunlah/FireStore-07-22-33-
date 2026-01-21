@@ -6,12 +6,10 @@ import 'dart:convert';
 import 'package:tugas1_11pplg2/Models/menu_makanan_model.dart';
 
 class MenuMakananController extends GetxController {
-  // CONTROLLER BUAT ULANG (MASIH DUMMY)
   var isLoading = false.obs;
   var makananList = <MapEntry<String, ItemMakanan>>[].obs;
   var errorMessage = ''.obs;
 
-  // base url firebase
   final String baseUrl = 'https://flutterpushtest-1d5f7-default-rtdb.asia-southeast1.firebasedatabase.app';
 
   @override
