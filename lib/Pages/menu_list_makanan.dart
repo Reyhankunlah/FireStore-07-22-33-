@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tugas1_11pplg2/Components/custom_Form.dart';
+import 'package:tugas1_11pplg2/Components/custom_form.dart';
 import 'package:tugas1_11pplg2/Components/custom_card.dart';
+import 'package:tugas1_11pplg2/Components/custom_appbar.dart';
+import 'package:tugas1_11pplg2/Components/custom_loading.dart';
+import 'package:tugas1_11pplg2/Components/custom_empty_state.dart';
+import 'package:tugas1_11pplg2/Components/custom_rounded_header.dart';
+import 'package:tugas1_11pplg2/Components/custom_color.dart';
 import 'package:tugas1_11pplg2/Controllers/menu_makanan_controller.dart';
 
 class MenuListMakanan extends StatelessWidget {
@@ -12,53 +17,47 @@ class MenuListMakanan extends StatelessWidget {
     final controller = Get.find<MenuMakananController>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xFFC04848),
-        title: const Text(
-          'Warung Bu Madu',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: true,
+      backgroundColor: CustomColor.greyBackground,
+      appBar: const CustomAppbar(
+        title: 'Warung Bu Madu',
       ),
-
-      /// FLOATING ADD BUTTON
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFC04848),
+        backgroundColor: CustomColor.primary,
         onPressed: () {
-          Get.dialog(CustomForm()); // ADD MODE
+          Get.dialog(
+            CustomForm(),
+            barrierDismissible: false,
+          );
         },
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: CustomColor.textWhite),
       ),
 
       body: Column(
         children: [
-          Container(
+          const CustomRoundedHeader(
+            color: CustomColor.primary,
             height: 20,
-            decoration: const BoxDecoration(
-              color: Color(0xFFC04848),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
           ),
-
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFC04848)),
+                return const CustomLoading(
+                  message: 'Memuat menu...',
                 );
               }
-
               if (controller.makananList.isEmpty) {
-                return const Center(child: Text('Belum ada menu'));
+                return CustomEmptyState(
+                  message: 'Belum ada menu',
+                  subtitle: 'Tap tombol + untuk menambah menu baru',
+                  icon: Icons.restaurant_menu_outlined,
+                  actionLabel: 'Tambah Menu',
+                  onActionPressed: () {
+                    Get.dialog(
+                      CustomForm(),
+                      barrierDismissible: false,
+                    );
+                  },
+                );
               }
 
               return ListView.builder(
@@ -79,15 +78,12 @@ class MenuListMakanan extends StatelessWidget {
                       description: 'Stok tersedia: ${item.stok}',
                       price: item.formattedPrice,
                       imageUrl: item.imageAddress,
-
-                      /// EDIT
                       onEditPressed: () {
                         Get.dialog(
                           CustomForm(isEdit: true, id: id, makanan: item),
+                          barrierDismissible: false,
                         );
                       },
-
-                      /// DELETE
                       onDeletePressed: () {
                         controller.confirmDeleteMakanan(id, item.namaMakanan);
                       },
