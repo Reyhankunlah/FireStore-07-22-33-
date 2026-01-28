@@ -271,4 +271,96 @@ class MenuMakananController extends GetxController {
   Future<void> refreshMakanan() async {
     await fetchMakanan();
   }
+void handleSubmitForm({
+  required bool isEdit,
+  String? id,
+  required String nama,
+  required String hargaText,
+  required String stokText,
+  required String imageUrl,
+}) {
+  // VALIDASI INPUT
+  if (nama.trim().isEmpty) {
+    _showError('Nama makanan harus diisi!');
+    return;
+  }
+
+  if (hargaText.trim().isEmpty) {
+    _showError('Harga harus diisi!');
+    return;
+  }
+
+  if (stokText.trim().isEmpty) {
+    _showError('Stok harus diisi!');
+    return;
+  }
+
+  if (imageUrl.trim().isEmpty) {
+    _showError('URL gambar harus diisi!');
+    return;
+  }
+
+  final harga = int.tryParse(hargaText);
+  final stok = int.tryParse(stokText);
+
+  if (harga == null || harga <= 0) {
+    _showError('Harga harus berupa angka positif!');
+    return;
+  }
+
+  if (stok == null || stok < 0) {
+    _showError('Stok harus berupa angka positif atau nol!');
+    return;
+  }
+
+  if (!imageUrl.startsWith('http')) {
+    _showError('URL gambar harus diawali http:// atau https://');
+    return;
+  }
+
+  // PANGGIL METHOD LAMA (TIDAK DIUBAH)
+  if (isEdit) {
+    updateMakanan(
+      id!,
+      nama.trim(),
+      harga,
+      stok,
+      imageUrl.trim(),
+    );
+  } else {
+    createMakanan(
+      nama.trim(),
+      harga,
+      stok,
+      imageUrl.trim(),
+    );
+  }
+
+  Get.back();
 }
+
+void _showError(String message) {
+  Get.snackbar(
+    'Error',
+    message,
+    snackPosition: SnackPosition.TOP,
+    backgroundColor: Colors.red,
+    colorText: Colors.white,
+    margin: const EdgeInsets.all(16),
+    borderRadius: 12,
+  );
+}
+
+void _showSuccess(String message) {
+  Get.snackbar(
+    'Berhasil',
+    message,
+    snackPosition: SnackPosition.TOP,
+    backgroundColor: Colors.green,
+    colorText: Colors.white,
+    margin: const EdgeInsets.all(16),
+    borderRadius: 12,
+  );
+}
+}
+
